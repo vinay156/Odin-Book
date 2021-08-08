@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const user = new mongoose.Schema({
+const User = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
@@ -19,17 +19,14 @@ const user = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: "hfghfgkgjgdjkgj",
-  },
-  facebookId: {
-    type: Number,
+    default: "https://www.linkedin.com/in/vinay-kumar-goyal-002809179/",
   },
   friends: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
     },
   ],
 });
 
-module.exports = mongoose.model("user", user);
+module.exports = mongoose.model("User", User);

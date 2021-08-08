@@ -1,21 +1,19 @@
+const express = require("express");
+
 const check = require("../middleware/auth");
 const commentController = require("../controllers/comment-controller");
-const express = require("express");
+
 const router = express.Router();
 
-router.get(
-  "/:postid/comments",
-  check.isAuth,
-  commentController.allPostComments
-);
-router.post("/:postid/comments", check.isAuth, commentController.doComment);
+router.get("/:id/comments", check.isAuth, commentController.allPostComments);
+router.post("/:id/comments", check.isAuth, commentController.addComment);
 router.put(
-  "/:postid/comments/:commentid",
+  "/:id/comments/:commentid",
   check.isAuth,
   commentController.updateComment
 );
 router.delete(
-  "/:postid/comments/:commentid",
+  "/:id/comments/:commentid",
   check.isAuth,
   commentController.deleteComment
 );

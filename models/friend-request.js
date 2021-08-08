@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 
-const friendRequest = new mongoose.Schema({
+const FriendRequest = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
     required: true,
   },
   receiver: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
     required: true,
   },
 });
 
-module.exports = mongoose.model("friendRequest", friendRequest);
+module.exports = mongoose.model("FriendRequest", FriendRequest);

@@ -3,7 +3,7 @@ const Post = require("../models/posts");
 exports.getAllPost = (req, res) => {
   try {
     Post.find()
-      .populate("userid")
+      .populate("user")
       .then((posts) => {
         if (posts.length === 0) {
           res.status(404).json({
@@ -19,10 +19,10 @@ exports.getAllPost = (req, res) => {
 };
 
 exports.getSinglePost = async (req, res) => {
-  const postid = req.params.id;
+  const postId = req.params.id;
   try {
-    await Post.findById(postid)
-      .populate("userid")
+    await Post.findById(postId)
+      .populate("user")
       .then((post) => {
         if (!post) {
           res.status(404).json({
@@ -38,7 +38,7 @@ exports.getSinglePost = async (req, res) => {
   }
 };
 
-exports.doPost = async (req, res) => {
+exports.addPost = async (req, res) => {
   const { content } = req.body;
   const userId = req.user._id;
   try {
@@ -47,13 +47,13 @@ exports.doPost = async (req, res) => {
         msg: "Post can't be empty",
       });
     }
-    const newPost = new Post({
-      content: content,
-      userid: userId,
+    const post = new Post({
+      content,
+      user: userId,
       likes: [],
     });
-    const postResult = await newPost.save();
-    return res.status(200).json(postResult);
+    const postResult = await post.save();
+    return res.status(200).json({ success: "success...", postResult });
   } catch (err) {
     res.status(500).json({
       err,
@@ -74,7 +74,7 @@ exports.updatePost = async (req, res) => {
     const check = await Post.findById(postId);
     if (check) {
       await Post.updateOne({ _id: postId }, updateData);
-      return res.status(200).json({ content, _id: postId });
+      return res.status(200).json({ success: "Updated...", content, postId });
     } else {
       return res.status(404).json({ msg: "Post Not found" });
     }
@@ -89,7 +89,9 @@ exports.deletePost = async (req, res) => {
   const postId = req.params.id;
   try {
     const deleteUpdate = await Post.deleteOne({ _id: postId });
-    return res.status(200).json({ deleteUpdate, _id: postId });
+    return res
+      .status(200)
+      .json({ success: "deleted...", deleteUpdate, postId });
   } catch (err) {
     res.status(500).json({
       err,
@@ -98,7 +100,7 @@ exports.deletePost = async (req, res) => {
 };
 
 exports.likePost = async (req, res) => {
-  const postid = req.params.id;
+  const postId = req.params.id;
   const { _id } = req.user;
   try {
     if (!_id) {
@@ -108,7 +110,7 @@ exports.likePost = async (req, res) => {
       });
     }
 
-    Post.findById(postid).then((post) => {
+    Post.findById(postId).then((post) => {
       if (!post) {
         return res.status(404).json({
           message: "Post not found.",
@@ -127,22 +129,21 @@ exports.likePost = async (req, res) => {
 
       likes.push(_id);
 
-      Post.updateOne({ _id: postid }, { likes })
+      Post.updateOne({ _id: postId }, { likes })
         .then((result) => {
-          return res.json(result);
+          return res.json({ success: "liked....", result });
         })
         .catch((err) => {
           throw err;
         });
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send();
+    res.status(500).json({ err });
   }
 };
 
 exports.dislikePost = async (req, res) => {
-  const postid = req.params.id;
+  const postId = req.params.id;
   const { _id } = req.user;
   try {
     if (!_id) {
@@ -152,7 +153,7 @@ exports.dislikePost = async (req, res) => {
       });
     }
 
-    Post.findById(postid).then((post) => {
+    Post.findById(postId).then((post) => {
       if (!post) {
         return res.status(404).json({
           message: "Post not found.",
@@ -168,9 +169,9 @@ exports.dislikePost = async (req, res) => {
 
       const likes = [...post.likes].filter((user) => user.toString() !== _id);
 
-      Post.updateOne({ _id: postid }, { likes })
+      Post.updateOne({ _id: postId }, { likes })
         .then((result) => {
-          return res.json({ result, msg: "done.." });
+          return res.json({ success: "disliked....", result });
         })
         .catch((err) => {
           throw err;
@@ -178,6 +179,6 @@ exports.dislikePost = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send();
+    res.status(500).json({ err });
   }
 };

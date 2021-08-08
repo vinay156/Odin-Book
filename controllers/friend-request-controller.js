@@ -20,9 +20,9 @@ exports.getAllFriendRequest = (req, res) => {
 };
 
 exports.getSingleFriendRequest = async (req, res) => {
+  const requestId = req.params.id;
   try {
-    const requestid = req.params.id;
-    await FriendRequest.findById(requestid)
+    await FriendRequest.findById(requestId)
       .populate("receiver")
       .populate("sender")
       .then((request) => {
@@ -40,22 +40,22 @@ exports.getSingleFriendRequest = async (req, res) => {
   }
 };
 
-exports.doFriendRequest = async (req, res) => {
-  const { sender, receiver } = req.body;
+exports.addFriendRequest = async (req, res) => {
+  const { senderId, receiverId } = req.body;
   try {
-    if (!sender || !receiver) {
+    if (!senderId || !receiverId) {
       return res.status(404).json({
         msg: "Sender or Receiver not given",
       });
     }
-    if (sender === receiver) {
+    if (senderId === receiverId) {
       return res.status(404).json({
         msg: "Sender and Receiver are same",
       });
     }
 
-    const senderUser = await User.findById(sender);
-    const receiverUser = await User.findById(receiver);
+    const senderUser = await User.findById(senderId);
+    const receiverUser = await User.findById(receiverId);
 
     if (!senderUser || !receiverUser) {
       return res.status(404).json({
@@ -63,11 +63,11 @@ exports.doFriendRequest = async (req, res) => {
       });
     }
 
-    const newFriendRequest = new FriendRequest({
-      sender: sender,
-      receiver: receiver,
+    const friendRequest = new FriendRequest({
+      sender: senderId,
+      receiver: receiverId,
     });
-    const requestResult = await newFriendRequest.save();
+    const requestResult = await friendRequest.save();
     return res.status(200).json(requestResult);
   } catch (err) {
     res.status(500).json({
@@ -77,10 +77,12 @@ exports.doFriendRequest = async (req, res) => {
 };
 
 exports.deleteFriendRequest = async (req, res) => {
-  const requestid = req.params.id;
+  const requestId = req.params.id;
   try {
-    const deleteUpdate = await FriendRequest.deleteOne({ _id: requestid });
-    return res.status(200).json({ deleteUpdate, _id: requestid });
+    const deleteUpdate = await FriendRequest.deleteOne({ _id: requestId });
+    return res
+      .status(200)
+      .json({ success: "delete friend request...", requestId });
   } catch (err) {
     res.status(500).json({
       err,

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const user = require("../models/users");
+const User = require("../models/users");
 
 exports.isAuth = (req, res, next) => {
   const bearerHeaders = req.headers["authorization"];
@@ -13,7 +13,7 @@ exports.isAuth = (req, res, next) => {
         });
       }
 
-      let tempUser = await user.findOne({ email: decoded.email });
+      let tempUser = await User.findOne({ email: decoded.email });
 
       if (!tempUser) {
         return res.json({
