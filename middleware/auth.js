@@ -8,7 +8,7 @@ exports.isAuth = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
       if (err) {
-        return res.json({
+        return res.status(400).json({
           err: "Invalid token : Login in ",
         });
       }
@@ -16,7 +16,7 @@ exports.isAuth = (req, res, next) => {
       let tempUser = await User.findOne({ email: decoded.email });
 
       if (!tempUser) {
-        return res.json({
+        return res.status(400).json({
           err: "Invalid User",
         });
       }
@@ -24,7 +24,7 @@ exports.isAuth = (req, res, next) => {
       next();
     });
   } else {
-    return res.json({
+    return res.status(500).json({
       err: "Not logged in",
     });
   }

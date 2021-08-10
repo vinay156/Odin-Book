@@ -9,7 +9,7 @@ exports.logIn = async (req, res) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    return res.json({
+    return res.status(400).json({
       err: "User dosent exist",
     });
   }
@@ -39,7 +39,7 @@ exports.signUp = async (req, res) => {
 
   let user = await User.findOne({ email });
   if (user) {
-    return res.json({
+    return res.status(400).json({
       err: "User already Exists",
     });
   }

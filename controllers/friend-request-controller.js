@@ -12,7 +12,7 @@ exports.getAllFriendRequest = async (req, res) => {
         msg: "No friends request found....",
       });
     }
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ err });
   }
@@ -29,7 +29,7 @@ exports.getSingleFriendRequest = async (req, res) => {
         msg: "request no found",
       });
     }
-    res.json(request);
+    res.status(200).json(request);
   } catch (err) {
     res.status(500).json({
       err,

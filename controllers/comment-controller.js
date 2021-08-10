@@ -13,7 +13,7 @@ exports.allPostComments = async (req, res) => {
         msg: "No comment found....",
       });
     }
-    res.json(comments);
+    res.status(200).json(comments);
   } catch (err) {
     res.status(500).json({ err });
   }

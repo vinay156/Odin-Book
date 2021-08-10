@@ -8,7 +8,7 @@ exports.getAllPost = async (req, res) => {
         msg: "No Posts found....",
       });
     }
-    res.json(posts);
+    res.status(200).json(posts);
   } catch (err) {
     res.status(500).json({ err });
   }
@@ -23,7 +23,7 @@ exports.getSinglePost = async (req, res) => {
         msg: "Post not found",
       });
     }
-    res.json(post);
+    res.status(200).json(post);
   } catch (err) {
     res.status(500).json({
       err,
@@ -114,7 +114,7 @@ exports.likePost = async (req, res) => {
     const foundUser = likes.find((user) => user.toString() === _id);
 
     if (foundUser !== undefined) {
-      return res.status(403).json({
+      return res.status(404).json({
         message: "Forbidden",
         details: ["User has already liked the post."],
       });
@@ -148,7 +148,7 @@ exports.dislikePost = async (req, res) => {
     }
 
     if (post.likes.indexOf(_id) === -1) {
-      return res.status(403).json({
+      return res.status(404).json({
         message: "Forbidden",
         details: ["User has not liked the post before."],
       });
