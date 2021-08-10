@@ -26,7 +26,7 @@ app.use("/auth", authRoute);
 app.use("/user", userRoute);
 app.use("/post", postRoute);
 app.use("/post", commentRoute);
-app.use("/friendrequest", friendRequestRoute);
+app.use("/friend-request", friendRequestRoute);
 app.get("*", (req, res) => {
   res.status(404).send("No Route Found");
 });

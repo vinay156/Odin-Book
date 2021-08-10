@@ -5,16 +5,13 @@ const User = require("../models/users");
 exports.getUser = async (req, res) => {
   const userId = req.params.id;
   try {
-    await User.findById(userId)
-      .populate("friends")
-      .then((user) => {
-        if (!user) {
-          res.status(404).json({
-            msg: "User no found",
-          });
-        }
-        res.json(user);
+    const user = await User.findById(userId).populate("friends");
+    if (!user) {
+      return res.status(404).json({
+        msg: "User no found",
       });
+    }
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json({
       err,
@@ -25,16 +22,13 @@ exports.getUser = async (req, res) => {
 exports.userPosts = async (req, res) => {
   const userId = req.params.id;
   try {
-    await Post.find({ user: userId })
-      .populate("user")
-      .then((posts) => {
-        if (posts.length === 0) {
-          res.status(404).json({
-            msg: "No posts found",
-          });
-        }
-        return res.json(posts);
+    const posts = await Post.find({ user: userId }).populate("user");
+    if (posts.length === 0) {
+      return res.status(404).json({
+        msg: "No posts found",
       });
+    }
+    res.status(200).json(posts);
   } catch (err) {
     res.status(500).json({
       err,
@@ -45,17 +39,15 @@ exports.userPosts = async (req, res) => {
 exports.friendRequests = async (req, res) => {
   const userId = req.params.id;
   try {
-    FriendRequest.find({ receiver: userId })
+    const friends = FriendRequest.find({ receiver: userId })
       .populate("sender")
-      .populate("receiver")
-      .then((results) => {
-        if (results.length === 0) {
-          return res.status(404).json({
-            msg: "No request found",
-          });
-        }
-        res.json(results);
+      .populate("receiver");
+    if (friends.length === 0) {
+      return res.status(404).json({
+        msg: "No request found",
       });
+    }
+    res.status(200).json(friends);
   } catch (err) {
     res.status(500).json({
       err,
@@ -93,7 +85,7 @@ exports.requestAccept = async (req, res) => {
     senderUser.friends.push(userId);
     const saveReceiver = receiverUser.save();
     const saveSender = senderUser.save();
-    return res.json({
+    return res.status(200).json({
       userId,
       saveReceiver,
     });
@@ -140,7 +132,7 @@ exports.unfriend = async (req, res) => {
       { _id: senderId },
       { friends: senderData }
     );
-    return res.json({ userId, updateReceiver });
+    return res.status(200).json({ userId, updateReceiver });
   } catch (err) {
     res.status(500).json({
       err,

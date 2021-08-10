@@ -22,23 +22,22 @@ exports.logIn = async (req, res) => {
     };
 
     const token = await jwt.sign(payLoad, key);
-    res.json({
+    res.status(200).json({
       success: "logged in..",
       userId: user._id,
       token,
     });
   } else {
-    res.json({
+    res.status(400).json({
       err: "Wrong Password",
     });
   }
 };
 
 exports.signUp = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
-  let { photo } = req.body;
+  const { firstName, lastName, email, password, photo } = req.body;
 
-  const user = await User.findOne({ email });
+  let user = await User.findOne({ email });
   if (user) {
     return res.json({
       err: "User already Exists",
@@ -46,7 +45,7 @@ exports.signUp = async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({
+  user = new User({
     firstName,
     lastName,
     email,
@@ -54,15 +53,9 @@ exports.signUp = async (req, res) => {
     photo,
   });
 
-  await newUser.save((err) => {
-    if (err) {
-      return res.json({
-        err,
-      });
-    }
-  });
-  res.json({
-    userId: newUser._id,
+  user = await user.save();
+  return res.status(200).json({
+    userId: user._id,
     success: "Successfully signed up",
   });
 };

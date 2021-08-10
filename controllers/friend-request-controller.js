@@ -1,19 +1,18 @@
 const FriendRequest = require("../models/friend-request");
 const User = require("../models/users");
 
-exports.getAllFriendRequest = (req, res) => {
+exports.getAllFriendRequest = async (req, res) => {
   try {
-    FriendRequest.find()
+    const data = await FriendRequest.find()
       .populate("receiver")
-      .populate("sender")
-      .then((data) => {
-        if (data.length === 0) {
-          res.status(404).json({
-            msg: "No friends request found....",
-          });
-        }
-        return res.json(data);
+      .populate("sender");
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        msg: "No friends request found....",
       });
+    }
+    res.json(data);
   } catch (err) {
     res.status(500).json({ err });
   }
@@ -22,17 +21,15 @@ exports.getAllFriendRequest = (req, res) => {
 exports.getSingleFriendRequest = async (req, res) => {
   const requestId = req.params.id;
   try {
-    await FriendRequest.findById(requestId)
+    const request = await FriendRequest.findById(requestId)
       .populate("receiver")
-      .populate("sender")
-      .then((request) => {
-        if (!request) {
-          res.status(404).json({
-            msg: "request no found",
-          });
-        }
-        res.json(request);
+      .populate("sender");
+    if (!request) {
+      return res.status(404).json({
+        msg: "request no found",
       });
+    }
+    res.json(request);
   } catch (err) {
     res.status(500).json({
       err,
