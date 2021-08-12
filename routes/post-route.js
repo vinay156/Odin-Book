@@ -2,7 +2,8 @@ const express = require("express");
 
 const check = require("../middleware/auth");
 const postController = require("../controllers/post-controller");
-const schema = require("../validator-schema/schema");
+const contentValidator = require("../validators/content-validator")
+  .contentSchema;
 const validator = require("../middleware/validator");
 
 const router = express.Router();
@@ -12,14 +13,14 @@ router.get("/:id", check.isAuth, postController.getSinglePost);
 router.post(
   "/",
   check.isAuth,
-  schema.contentSchema,
+  contentValidator,
   validator.validateRequest,
   postController.addPost
 );
 router.put(
   "/:id",
   check.isAuth,
-  schema.contentSchema,
+  contentValidator,
   validator.validateRequest,
   postController.updatePost
 );

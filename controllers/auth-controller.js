@@ -9,7 +9,7 @@ exports.logIn = async (req, res) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(400).json({
+    return res.status(404).json({
       err: "User dosent exist",
     });
   }
@@ -28,7 +28,7 @@ exports.logIn = async (req, res) => {
       token,
     });
   } else {
-    res.status(400).json({
+    res.status(401).json({
       err: "Wrong Password",
     });
   }
@@ -39,7 +39,7 @@ exports.signUp = async (req, res) => {
 
   let user = await User.findOne({ email });
   if (user) {
-    return res.status(400).json({
+    return res.status(404).json({
       err: "User already Exists",
     });
   }

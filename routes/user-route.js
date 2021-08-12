@@ -1,7 +1,8 @@
 const express = require("express");
 
 const check = require("../middleware/auth");
-const schema = require("../validator-schema/schema");
+const requestAcceptValidator = require("../validators/request-accept-validator")
+  .requestAcceptSchema;
 const userController = require("../controllers/user-controller");
 const validator = require("../middleware/validator");
 
@@ -13,7 +14,7 @@ router.get("/:id/friendrequests", check.isAuth, userController.friendRequests);
 router.put(
   "/:id/friend",
   check.isAuth,
-  schema.requestAcceptSchema,
+  requestAcceptValidator,
   validator.validateRequest,
   userController.requestAccept
 );

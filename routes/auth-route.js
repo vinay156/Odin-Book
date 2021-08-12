@@ -1,20 +1,21 @@
 const express = require("express");
 
 const authController = require("../controllers/auth-controller");
-const schema = require("../validator-schema/schema");
+const signUpValidator = require("../validators/sign-up-validator").signUpSchema;
+const logInValidator = require("../validators/log-in-validator").logInSchema;
 const validator = require("../middleware/validator");
 
 const router = express.Router();
 
 router.post(
   "/sign-up",
-  schema.signUpSchema,
+  signUpValidator,
   validator.validateRequest,
   authController.signUp
 );
 router.post(
   "/log-in",
-  schema.logInSchema,
+  logInValidator,
   validator.validateRequest,
   authController.logIn
 );

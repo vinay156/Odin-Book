@@ -2,7 +2,8 @@ const express = require("express");
 
 const check = require("../middleware/auth");
 const friendRequestController = require("../controllers/friend-request-controller");
-const schema = require("../validator-schema/schema");
+const friendRequestValidator = require("../validators/friend-request-validator")
+  .friendRequestSchema;
 const validator = require("../middleware/validator");
 
 const router = express.Router();
@@ -16,7 +17,7 @@ router.get(
 router.post(
   "/",
   check.isAuth,
-  schema.friendRequestSchema,
+  friendRequestValidator,
   validator.validateRequest,
   friendRequestController.addFriendRequest
 );

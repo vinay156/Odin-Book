@@ -16,8 +16,8 @@ exports.isAuth = (req, res, next) => {
       let tempUser = await User.findOne({ email: decoded.email });
 
       if (!tempUser) {
-        return res.status(400).json({
-          err: "Invalid User",
+        return res.status(404).json({
+          err: "User not found",
         });
       }
       req.user = tempUser;
